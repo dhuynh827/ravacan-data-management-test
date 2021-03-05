@@ -19,3 +19,9 @@ Sample data has been provided as sample_data_sheet.csv
 This is the same sheet that was used to test the drag and drop
 as well as the copy and paste.
 ```
+
+## Todo
+```
+- Edit in place within the table
+- In depth table configurations/validations
+```
