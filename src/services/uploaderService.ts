@@ -37,7 +37,6 @@ const validateCsvFile = (file: File): Promise<any | PromiseRejectedResult> => {
                     reject('something went wrong during file processing');
                 }
 
-
                 resolve(Object.values(data).reduce((acc, row) => validateRow(row) ? [ ...acc, row ] : acc, []));
             },
             header: true,

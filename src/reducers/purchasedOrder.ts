@@ -1,18 +1,41 @@
 import { DataActionTypes } from "../actions/data";
 import { ActionType } from "../types/actionType";
-import { PurchasedOrderData, TableUpdatePayload } from "../types/tableData"
+import { PurchasedOrderData, TableData, TableUpdatePayload } from "../types/tableData"
 
 const initialState: PurchasedOrderData = [];
 
-const dataWithCamelCaseKeys = (data: Array<PurchasedOrderData>) => {
-    const formattedData = data.map( (purchaseObject: PurchasedOrderData) => {
-        return Object.entries(purchaseObject).reduce( (acc, [key, value ]) => {
+const dataWithCamelCaseKeys = (data: PurchasedOrderData) => {
+    const formattedData = data.map((purchaseObject: TableData) => {
+        return Object.entries(purchaseObject).reduce((acc, [ key, value ]) => {
             const newKey = key.replace(/([a-z])(_)([a-z])/g, (_match, group1, _underscore, group3) => group1 + group3.toUpperCase());
-            return {...acc, [ newKey ]: value };
-        }, {});
+            return { ...acc, [ newKey ]: value };
+        }, {}) as TableData;
     });
 
-    return formattedData;
+    return formattedData.map(({
+        partNumber,
+        unitPrice,
+        quantity,
+        totalPrice,
+        uom,
+        leadtime,
+        supplierName,
+        supplierAddress,
+        deliveryAddress,
+        purchasedDate
+    }: TableData) => ({
+            partNumber,
+            unitPrice,
+            quantity,
+            totalPrice,
+            uom,
+            leadtime,
+            supplierName,
+            supplierAddress,
+            deliveryAddress,
+            purchasedDate
+        }) as TableData
+    ) as PurchasedOrderData;
 }
 
 const PurchasedOrder = (state = initialState, action: ActionType) => {
@@ -26,7 +49,7 @@ const PurchasedOrder = (state = initialState, action: ActionType) => {
         case DataActionTypes.FETCH_TABLE_DATA: {
             const { payload } = action;
 
-            return [...state, ...payload];
+            return [...state, ...dataWithCamelCaseKeys(payload)];
         }
 
         case DataActionTypes.UPLOAD_CSV_DATA:
@@ -43,7 +66,7 @@ const PurchasedOrder = (state = initialState, action: ActionType) => {
 
             newState[index][key] = value;
 
-            return [...newState];
+            return [ ...dataWithCamelCaseKeys(newState)];
         }
 
         default: return state;

@@ -4,9 +4,10 @@ interface ValidPropertyType {
     [ key: string ]: string;
 }
 
+const hasAlpha = (value: any) => typeof value === 'string' && value.search(/[a-z | A-Z]/g) > -1;
 const isString = (value: any) => typeof value === 'string';
-const isFloat = (value: any) => !isNaN(parseFloat(value));
-const isInt = (value: any) => !isNaN(parseInt(value));
+const isFloat = (value: any) => !hasAlpha(value) && !isNaN(parseFloat(value));
+const isInt = (value: any) => !hasAlpha(value) && !isNaN(parseInt(value));
 const isValidUOM = (value: any) => !!(Object.values(UNIT_OF_MEASUREMENTS).filter(property => property === value)) || false;
 const isValidDateFormat = (value: string) => {
     if (typeof value !== 'string') {
@@ -54,4 +55,4 @@ export const handleValidation = (type: string, value: any) => {
     }
 }
 
-export const isValidData = (key: string, value: any): boolean => (key in validPropertyDataTypes) && handleValidation(validPropertyDataTypes[ key ], value)
+export const isValidData = (key: string, value: any): boolean => (key in validPropertyDataTypes) && handleValidation(validPropertyDataTypes[ key ], value);

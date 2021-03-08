@@ -4,8 +4,7 @@ export enum UNIT_OF_MEASUREMENTS {
     M = 'meter'
 };
 
-export type TableHeaders = [ 'Part Number', 'Price', 'Quantity', 'Total Price', 'UOM', 'Leadtime', 'Supplier Name', 'Supplier Address',
-    'Delivery Address', 'Purchased Date'];
+export type TableHeaders = keyof TableData;
 
 export interface TableData {
     partNumber: string;

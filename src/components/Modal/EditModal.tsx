@@ -1,4 +1,5 @@
 import { createRef, useRef, KeyboardEvent, RefObject, useEffect } from 'react';
+import { TableHeaders } from '../../types/tableData';
 import {
     CurrentDataContainer,
     CurrentDataContent,
@@ -17,7 +18,7 @@ import {
 
 interface EditModalProps {
     editData: {
-        key: string;
+        key: TableHeaders | null;
         value: string | number;
     };
     handleModalClose(): void;
@@ -71,7 +72,7 @@ const EditModal = ({ editData, handleModalClose, handleValueUpdate, show }: Edit
         <ModalContainer tabIndex={0} onKeyUp={handleEscKey} ref={modalRef}>
             <Modal show={show}>
                 <ModalHeader>
-                    <Title>Editing { key.replace(/([A-Z])/g, ' $1').replace(/^./, (char) => char.toUpperCase()) }</Title>
+                    <Title>Editing {key && key.replace(/([A-Z])/g, ' $1').replace(/^./, (char) => char.toUpperCase()) }</Title>
                     <CloseButton inverted={true} onClick={handleModalClose}>X</CloseButton>
                 </ModalHeader>
                 <CurrentDataContainer>

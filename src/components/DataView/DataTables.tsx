@@ -1,4 +1,4 @@
-import { MouseEvent, useCallback, useEffect, useRef, useState } from 'react';
+import { MouseEvent, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { doUpdateData } from '../../actions/data';
 import { State } from '../../reducers';
@@ -7,16 +7,19 @@ import EditModal from '../Modal/EditModal';
 
 import { Table, DataContainer, DataFields, HeaderField, TableHeader, Container } from './styles';
 
-const HEADER_FIELDS: TableHeaders = [ 'Part Number', 'Price', 'Quantity', 'Total Price', 'UOM', 'Leadtime', 'Supplier Name',
-    'Supplier Address', 'Delivery Address', 'Purchased Date' ];
+interface EditDataTypes {
+    key: TableHeaders | null,
+    value: string;
+    index: number
+}
 
 const DataTables = () => {
     const [ editMode, setEditMode ] = useState(false);
-    const [editData, setEditData ] = useState({ key: '', value: '', index: 0 });
+    const [editData, setEditData ] = useState({ key: null, value: '', index: 0 } as EditDataTypes);
 
     const dispatch = useDispatch();
-    const PrevData = (oldData: Array<PurchasedOrderData>) => {
-        const ref = useRef<Array<PurchasedOrderData>>();
+    const PrevData = (oldData: PurchasedOrderData) => {
+        const ref = useRef<PurchasedOrderData>();
 
         useEffect(() => {
             ref.current = oldData as any;
@@ -24,17 +27,27 @@ const DataTables = () => {
 
         return ref.current;
     }
-    const someData = useSelector(({ purchasedOrder }: State) => purchasedOrder);;
-
+    const someData = useSelector(({ purchasedOrder }: State) => purchasedOrder) as PurchasedOrderData;
     const prevSomeData = PrevData(someData);
+    const HEADER_FIELDS = useMemo(
+        () => {
+            if (!someData || !someData[0]) {
+                return [];
+            }
+
+            return Object.keys(someData[0]).map((key: string) => key.replace(/([a-z]+)([A-Z])/g, (_match, group1, group2) =>
+                group1.replace(/^./, (char: string) => char.toUpperCase()) + ' ' + group2)
+            );
+        }, [ someData ]
+    ) || [];
 
     useEffect(
         () => {
             if (editMode && someData !== prevSomeData) {
                 const { key, index } = editData;
                 setEditData({
-                    key, index, value: someData[index][key]
-                })
+                    key, index, value: !key ? '' : someData[index][key] as string
+                });
             }
         }, [ someData, prevSomeData, editData, editMode, setEditData ]);
 
@@ -43,7 +56,7 @@ const DataTables = () => {
     const handleClick = useCallback(
         (event: MouseEvent<HTMLTableCellElement>) => {
             const { textContent } = event.currentTarget;
-            const key = event.currentTarget.getAttribute('data-key') || '';
+            const key = event.currentTarget.getAttribute('data-key') as TableHeaders;
             const index = parseInt(event.currentTarget.getAttribute('data-index') as string);
 
             setEditMode(true);
@@ -58,7 +71,7 @@ const DataTables = () => {
 
     const handleValueUpdate = useCallback(
         (value: any) => {
-            const { key, index } = editData;
+            const { key, index } = editData as EditDataTypes;
             dispatch(doUpdateData(key, value, index));
         }, [ dispatch, editData ]
     );

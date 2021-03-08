@@ -1,6 +1,7 @@
 import { tableDataService } from "../services/dataServices";
 import { uploaderService } from "../services/uploaderService";
 import { ThunkActionType } from "../types/actionType";
+import { TableHeaders } from '../types/tableData';
 import { requestDone, requestMade } from "./status";
 
 export enum DataActionTypes {
@@ -77,9 +78,13 @@ export const processManualCsvUpload = (csvString: string): ThunkActionType => {
     }
 }
 
-export const doUpdateData = (key: string, value: any, index: number): ThunkActionType => {
+export const doUpdateData = (key: TableHeaders | null, value: any, index: number): ThunkActionType => {
     return async dispatch => {
         dispatch(requestMade());
+
+        if (!key) {
+            throw new Error('invalid key');
+        }
 
         try {
             const uploadResponse = await uploaderService.updateSingleInput({key, index, value});
