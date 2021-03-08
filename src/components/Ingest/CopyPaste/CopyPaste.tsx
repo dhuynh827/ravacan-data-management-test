@@ -1,4 +1,4 @@
-import { createRef, RefObject, useCallback, useEffect, useState } from 'react';
+import React, { createRef, RefObject, useCallback, useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { processManualCsvUpload } from '../../../actions/data';
 import { State } from '../../../reducers';

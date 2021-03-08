@@ -11,6 +11,8 @@ export enum DataActionTypes {
     UPLOAD_CSV_DATA_ERROR = 'UPLOAD_CSV_DATA_ERROR',
     MANUAL_CSV_UPLOAD = 'MANUAL_CSV_UPLOAD',
     MANUAL_CSV_UPLOAD_ERROR = 'MANUAL_CSV_UPLOAD_ERROR',
+    TABLE_ENTRY_ADD = 'TABLE_ENTRY_ADD',
+    TABLE_ENTRY_ADD_ERROR = 'TABLE_ENTRY_ADD_ERROR',
     TABLE_ENTRY_UPDATE = 'TABLE_ENTRY_UPDATE',
     TABLE_ENTRY_UPDATE_ERROR = 'TABLE_ENTRY_UPDATE_ERROR'
 };
@@ -103,4 +105,25 @@ export const doUpdateData = (key: TableHeaders | null, value: any, index: number
 
         setTimeout(() => dispatch(requestDone()), 1500);
     }
+}
+
+export const doAddTableEntry = (data: any): ThunkActionType => async dispatch => {
+    dispatch(requestMade());
+    try {
+
+        const addResponse = await uploaderService.addDataEntry(data);
+
+        dispatch({
+            payload: addResponse.data,
+            error: false,
+            type: DataActionTypes.TABLE_ENTRY_ADD
+        })
+    } catch {
+        dispatch({
+            payload: {},
+            error: true,
+            type: DataActionTypes.TABLE_ENTRY_ADD_ERROR
+        })
+    }
+    setTimeout(() => dispatch(requestDone()), 1500);
 }

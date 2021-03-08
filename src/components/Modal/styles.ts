@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import theme from '../../patterns/Themes';
+import theme, { Button } from '../../patterns/Themes';
 
 interface ModalProps {
     show: boolean;
@@ -70,30 +70,6 @@ export const NewDataInput = styled.input`
 
 export const CtaContainer = styled(CurrentDataContainer)`
     align-self: flex-end;
-`;
-
-interface ButtonProps {
-    inverted?: boolean;
-}
-
-export const Button = styled.button<ButtonProps>`
-    background-color: ${({ inverted }) => inverted ? theme.colors.white : theme.colors.lightPrimary };
-    border: ${({ inverted }) => inverted ? `1px solid ${theme.colors.lightPrimary }` : 'none'};
-    color: ${({ inverted }) => inverted ? theme.colors.darkPrimary : theme.colors.white };
-    cursor: pointer;
-    border-radius: 24px;
-    padding: 8px;
-    width: 100px;
-    height: 40px;
-
-    &:first-child {
-        margin-right: .5rem;
-    }
-
-    &:active {
-        background-color: ${({ inverted }) => inverted ? theme.colors.lightPrimary : theme.colors.primary};
-        color: ${({ inverted }) => inverted ? theme.colors.white : theme.colors.darkPrimary};
-    }
 `;
 
 export const CloseButton = styled(Button)`

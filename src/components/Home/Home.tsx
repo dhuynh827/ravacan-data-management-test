@@ -1,3 +1,4 @@
+import React from 'react';
 import DataTables from '../DataView/DataTables';
 import { HomeContainer } from './styles';
 

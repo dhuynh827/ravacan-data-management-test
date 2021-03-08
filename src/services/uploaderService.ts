@@ -93,8 +93,19 @@ const updateSingleInput = async ({ key, index, value }: UpdateParams): Promise<a
     return simulateApi({ key, value, index });
 };
 
+const addDataEntry = async (data: any): Promise<any> => {
+    const newData = Object.entries(data).reduce((acc, [key, value]) => {
+        const underScoreKey = key.replace(/([A-Z])/g, char => `_${char.toLocaleLowerCase()}`);
+
+        return { ...acc, ...{ [underScoreKey]: value }};
+    }, {});
+
+    return simulateApi(prepareApiPayload(newData));
+}
+
 export const uploaderService = {
     uploadFile,
     uploadCsvText,
-    updateSingleInput
+    updateSingleInput,
+    addDataEntry
 };

@@ -1,8 +1,9 @@
 import styled from 'styled-components';
-import theme from '../../patterns/Themes';
+import theme, { Button } from '../../patterns/Themes';
 
 export const Container = styled.div`
     display: flex;
+    flex-direction: column;
 `;
 
 export const Table = styled.table`
@@ -20,16 +21,14 @@ export const HeaderField = styled.td`
 `
 
 export const DataContainer = styled.tbody`
-    tr {
-        margin: .5rem 0;;
-    }
+    border-spacing: .5rem;
 `;
 
 export const DataFields = styled.td`
     font-size: .85rem;
     text-align: center;
     cursor: pointer;
-    padding: 8px 4px;
+    padding: 8px 2px;
     border-radius: 4px;
 
     &:hover {
@@ -37,3 +36,5 @@ export const DataFields = styled.td`
         color: ${theme.colors.white};
     }
 `;
+
+export const AddEntryButton = styled(Button)``;

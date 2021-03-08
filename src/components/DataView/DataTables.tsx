@@ -1,11 +1,12 @@
-import { MouseEvent, useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import React, { MouseEvent, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { doUpdateData } from '../../actions/data';
+import { doAddTableEntry, doUpdateData } from '../../actions/data';
 import { State } from '../../reducers';
 import { TableHeaders, TableData, PurchasedOrderData } from '../../types/tableData';
 import EditModal from '../Modal/EditModal';
+import DataEntryRow from './DataEntryRow/DataEntryRow';
 
-import { Table, DataContainer, DataFields, HeaderField, TableHeader, Container } from './styles';
+import { Table, DataContainer, DataFields, HeaderField, TableHeader, Container, AddEntryButton } from './styles';
 
 interface EditDataTypes {
     key: TableHeaders | null,
@@ -15,7 +16,8 @@ interface EditDataTypes {
 
 const DataTables = () => {
     const [ editMode, setEditMode ] = useState(false);
-    const [editData, setEditData ] = useState({ key: null, value: '', index: 0 } as EditDataTypes);
+    const [ addMode, setAddMode ] = useState(false);
+    const [ editData, setEditData ] = useState({ key: null, value: '', index: 0 } as EditDataTypes);
 
     const dispatch = useDispatch();
     const PrevData = (oldData: PurchasedOrderData) => {
@@ -35,9 +37,7 @@ const DataTables = () => {
                 return [];
             }
 
-            return Object.keys(someData[0]).map((key: string) => key.replace(/([a-z]+)([A-Z])/g, (_match, group1, group2) =>
-                group1.replace(/^./, (char: string) => char.toUpperCase()) + ' ' + group2)
-            );
+            return Object.keys(someData[0]);
         }, [ someData ]
     ) || [];
 
@@ -76,13 +76,24 @@ const DataTables = () => {
         }, [ dispatch, editData ]
     );
 
+    const startDataEntry = () => {
+        setAddMode(true);
+    }
+
+    const handleDataEntry = useCallback(
+        (data: any) => {
+            dispatch(doAddTableEntry(data));
+    }, [ dispatch ]);
+
     return (
         <Container>
+            <AddEntryButton onClick={startDataEntry}>Add Entry</AddEntryButton>
             <Table>
                 <TableHeader>
                     <tr>
                         {HEADER_FIELDS.map((field, index) => (
-                            <HeaderField key={`header-${index}`}>{field}</HeaderField>
+                            <HeaderField key={`header-${index}`}>{field.replace(/([a-z]+)([A-Z])/g, (_match, group1, group2) =>
+                                group1.replace(/^./, (char: string) => char.toUpperCase()) + ' ' + group2)}</HeaderField>
                         ))}
                     </tr>
                 </TableHeader>
@@ -98,8 +109,10 @@ const DataTables = () => {
                                 onClick={handleClick}
                             >{field}</DataFields>
                         ))}
+                        <td></td>
                     </tr>
                 ))}
+                {addMode && <DataEntryRow fields={ HEADER_FIELDS } handleDataEntry={handleDataEntry}/>}
                 </DataContainer>
             </Table>
             {editMode && <EditModal

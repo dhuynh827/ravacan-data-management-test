@@ -1,4 +1,5 @@
-import { createRef, useRef, KeyboardEvent, RefObject, useEffect } from 'react';
+import React, { createRef, useRef, KeyboardEvent, RefObject, useEffect } from 'react';
+import { Button } from '../../patterns/Themes';
 import { TableHeaders } from '../../types/tableData';
 import {
     CurrentDataContainer,
@@ -10,7 +11,6 @@ import {
     NewDataHeader,
     NewDataInput,
     Title,
-    Button,
     CtaContainer,
     ModalHeader,
     CloseButton

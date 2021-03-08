@@ -69,6 +69,12 @@ const PurchasedOrder = (state = initialState, action: ActionType) => {
             return [ ...dataWithCamelCaseKeys(newState)];
         }
 
+        case DataActionTypes.TABLE_ENTRY_ADD: {
+            const { payload } = action;
+
+            return [...state, ...dataWithCamelCaseKeys([payload])];
+        }
+
         default: return state;
     }
 }
