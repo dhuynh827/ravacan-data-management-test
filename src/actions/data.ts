@@ -9,7 +9,9 @@ export enum DataActionTypes {
     UPLOAD_CSV_DATA = 'UPLOAD_CSV_DATA',
     UPLOAD_CSV_DATA_ERROR = 'UPLOAD_CSV_DATA_ERROR',
     MANUAL_CSV_UPLOAD = 'MANUAL_CSV_UPLOAD',
-    MANUAL_CSV_UPLOAD_ERROR = 'MANUAL_CSV_UPLOAD_ERROR'
+    MANUAL_CSV_UPLOAD_ERROR = 'MANUAL_CSV_UPLOAD_ERROR',
+    TABLE_ENTRY_UPDATE = 'TABLE_ENTRY_UPDATE',
+    TABLE_ENTRY_UPDATE_ERROR = 'TABLE_ENTRY_UPDATE_ERROR'
 };
 
 export const fetchTableData = (): ThunkActionType => {
@@ -71,6 +73,29 @@ export const processManualCsvUpload = (csvString: string): ThunkActionType => {
                 type: DataActionTypes.MANUAL_CSV_UPLOAD_ERROR
             })
         }
+        setTimeout(() => dispatch(requestDone()), 1500);
+    }
+}
+
+export const doUpdateData = (key: string, value: any, index: number): ThunkActionType => {
+    return async dispatch => {
+        dispatch(requestMade());
+
+        try {
+            const uploadResponse = await uploaderService.updateSingleInput({key, index, value});
+
+            dispatch({
+                payload: { ...uploadResponse.data} ,
+                type: DataActionTypes.TABLE_ENTRY_UPDATE
+            });
+        } catch {
+            dispatch({
+                payload: {},
+                error: true,
+                type: DataActionTypes.TABLE_ENTRY_UPDATE_ERROR
+            })
+        }
+
         setTimeout(() => dispatch(requestDone()), 1500);
     }
 }

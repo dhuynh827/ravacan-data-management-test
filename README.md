@@ -21,7 +21,6 @@ as well as the copy and paste.
 ```
 
 ## Todo
-```
-- Edit in place within the table
-- In depth table configurations/validations
-```
+
+- [x] Edit in place within the table
+- [ ] In depth table configurations/validations

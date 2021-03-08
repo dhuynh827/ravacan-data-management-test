@@ -1,7 +1,11 @@
 import styled from 'styled-components';
 import theme from '../../patterns/Themes';
 
-export const Container = styled.table`
+export const Container = styled.div`
+    display: flex;
+`;
+
+export const Table = styled.table`
     table-layout: fixed;
     border-spacing 1rem;
     width: 100%;

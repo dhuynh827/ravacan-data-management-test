@@ -9,7 +9,7 @@ export type TableHeaders = [ 'Part Number', 'Price', 'Quantity', 'Total Price', 
 
 export interface TableData {
     partNumber: string;
-    price: number;
+    unitPrice: number;
     quantity: number;
     totalPrice: number;
     uom: UNIT_OF_MEASUREMENTS,
@@ -21,3 +21,9 @@ export interface TableData {
 }
 
 export type PurchasedOrderData = Array<TableData> | [];
+
+export interface TableUpdatePayload {
+    index: number;
+    key: keyof TableData;
+    value: any;
+}

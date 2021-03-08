@@ -1,53 +1,13 @@
 import Papa from "papaparse";
-import { UNIT_OF_MEASUREMENTS } from "../types/tableData";
+import { isValidData } from '../helpers/validation';
 
-const isString = (value: any) => typeof value === 'string';
-const isFloat = (value: any) => !isNaN(parseFloat(value));
-const isInt = (value: any) => !isNaN(parseInt(value));
-const isValidUOM = (value: any) => !!(Object.values(UNIT_OF_MEASUREMENTS).filter(property => property === value)) || false;
-const isValidDateFormat = (value: string) => {
-    if (typeof value !== 'string') {
-        return false;
-    }
-
-    const [year, month, day] = value.split('-');
-
-    if (!isInt(year) || year.length !== 4 || parseInt(year) > (new Date()).getFullYear()) {
-        return false;
-    }
-
-    if (!isInt(month) || month.length !== 2 || parseInt(month) > 13 || parseInt(month) < 1) {
-        return false;
-    }
-
-    if (!isInt(day) || month.length !== 2 || parseInt(day) > 31 || parseInt(month) < 1) {
-        return false;
-    }
-
-    return true;
-}
-
-interface ValidPropertyType {
-    [key: string]: (value: any) => boolean;
-}
-const validPropertyDataTypes: ValidPropertyType = {
-    part_number: isString,
-    unit_price: isFloat,
-    quantity: isString,
-    uom: isValidUOM,
-    leadtime: isValidDateFormat,
-    supplier_name: isString,
-    supplier_address: isString,
-    purchased_date: isValidDateFormat,
-    delivery_address: isString,
-    total_price: isFloat
-}
+const simulateApi = (responseData: any) => new Promise(resolve => setTimeout(() => resolve({ data: responseData }), 100));
 
 const validateRow = (row: any) => {
     let cleanFlag = true;
 
     Object.entries(row).forEach( ([key, value]: [key: string, value: any]) => {
-        if (!(key in validPropertyDataTypes) || !validPropertyDataTypes[ key ](value)) {
+        if (!isValidData(key, value)) {
             cleanFlag = false;
             return;
         }
@@ -55,6 +15,19 @@ const validateRow = (row: any) => {
 
     return cleanFlag ? row : false;
 }
+
+const prepareApiPayload = (data: any) => ({
+    part_number: data.part_number,
+    unit_price: data.unit_price,
+    total_price: parseFloat(data.total_price),
+    quantity: parseFloat(data.quantity),
+    uom: data.uom,
+    leadtime: data.leadtime,
+    supplier_name: data.supplier_name,
+    supplier_address: data.supplier_address,
+    delivery_address: data.delivery_address,
+    purchased_date: data.purchased_date
+});
 
 const validateCsvFile = (file: File): Promise<any | PromiseRejectedResult> => {
     return new Promise((resolve, reject) => {
@@ -73,21 +46,6 @@ const validateCsvFile = (file: File): Promise<any | PromiseRejectedResult> => {
         });
     });
 };
-
-const prepareApiPayload = (data: any) => ({
-    part_number: data.part_number,
-    unit_price: data.unit_price,
-    total_price: parseFloat(data.total_price),
-    quantity: parseFloat(data.quantity),
-    uom: data.uom,
-    leadtime: data.leadtime,
-    supplier_name: data.supplier_name,
-    supplier_address: data.supplier_address,
-    delivery_address: data.delivery_address,
-    purchased_date: data.purchased_date
-});
-
-const simulateApi = (responseData: any) => new Promise(resolve => setTimeout(() => resolve({ data: responseData}), 100));
 
 const uploadFile = async (file: File): Promise<any> => {
     try {
@@ -120,7 +78,24 @@ const uploadCsvText = async (csvString: string): Promise<any> => {
     return simulateApi(cleanedData);
 };
 
+interface UpdateParams {
+    key: string;
+    index: number;
+    value: any;
+}
+
+const updateSingleInput = async ({ key, index, value }: UpdateParams): Promise<any> => {
+    const underScoreKey = key.replace(/([A-Z])/g, char => `_${char.toLocaleLowerCase()}`);
+
+    if (!isValidData(underScoreKey, value)) {
+        throw new Error('invalid data type');
+    }
+
+    return simulateApi({ key, value, index });
+};
+
 export const uploaderService = {
     uploadFile,
-    uploadCsvText
+    uploadCsvText,
+    updateSingleInput
 };

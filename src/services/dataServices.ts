@@ -3,7 +3,7 @@ import { PurchasedOrderData, UNIT_OF_MEASUREMENTS } from "../types/tableData";
 const someData = [
     {
         partNumber: '001',
-        price: 1.00,
+        unitPrice: 1.00,
         quantity: 20,
         totalPrice: 20.00,
         uom: UNIT_OF_MEASUREMENTS.G,
@@ -15,7 +15,7 @@ const someData = [
         },
     {
         partNumber: '002',
-        price: 1.50,
+        unitPrice: 1.50,
         quantity: 10,
         totalPrice: 15.00,
         uom: UNIT_OF_MEASUREMENTS.EA,
@@ -27,7 +27,7 @@ const someData = [
     },
     {
         partNumber: '003',
-        price: 1.50,
+        unitPrice: 1.50,
         quantity: 10,
         totalPrice: 15.00,
         uom: UNIT_OF_MEASUREMENTS.EA,
